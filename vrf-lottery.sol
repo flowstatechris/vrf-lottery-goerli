@@ -46,13 +46,13 @@ contract Lottery is VRFV2WrapperConsumerBase{
         lotteryId = 1;
     }
 
-    modifier onlyowner() {
+    modifier onlyOwner() {
         require(msg.sender == owner);
         _;
     }
 
     //note: VRF requires the gaslimit on the requestRandomness() call to be 400,000
-    function getRandomNumber() public returns (uint256 requestId) {
+    function getRandomNumber() public onlyOwner returns (uint256 requestId) {
 
         require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK in contract");
 
@@ -91,11 +91,11 @@ contract Lottery is VRFV2WrapperConsumerBase{
         players.push(payable(msg.sender));
     }
 
-    function pickWinner() public onlyowner {
+    function pickWinner() public onlyOwner {
         getRandomNumber();
     }
 
-    function payWinner() public {
+    function payWinner() public onlyOwner {
 
         require(randomResult > 0, "Must have a source of randomness before choosing winner");
 
